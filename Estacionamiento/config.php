@@ -1,18 +1,20 @@
 <?php
 // config.php
 
-// Configuración de la base de datos
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root'); // Cambia esto por tu usuario de MySQL
-define('DB_PASS', '');     // Cambia esto por tu contraseña de MySQL
-define('DB_NAME', 'estacionamiento_cecyt9');
+// Usar variables de entorno de Railway si existen, sino usar valores locales (para desarrollo)
+define('DB_HOST', getenv('MYSQLHOST') ?: 'localhost');
+define('DB_USER', getenv('MYSQLUSER') ?: 'root');
+define('DB_PASS', getenv('MYSQLPASSWORD') ?: '');
+define('DB_NAME', getenv('MYSQLDATABASE') ?: 'estacionamiento_cecyt9');
 
 // Conexión a la base de datos
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 // Verificar la conexión
 if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+    // IMPORTANTE: En producción, no muestres el error detallado al usuario
+    error_log("Error de conexión: " . $conn->connect_error); 
+    die("Error de conexión a la base de datos.");
 }
 
 // Función para sanitizar entradas
